@@ -1,34 +1,35 @@
-# ShopLedger
+# ShopLedger agent notes
 
 ## Stack
-- Node.js application using Express 4 and body-parser for JSON request parsing.
-- Browser UI is static HTML, CSS, and JavaScript served from `public/`.
-- Application data is read from and written to `data/db.json` by `lib/store.js`.
+- Node.js CommonJS app using Express 4 (`express` `^4.17.1`) and `body-parser` (`^1.19.0`).
+- `server.js` serves static files from `public/`, mounts API routers at `/api`, and serves printable invoice HTML at `/orders/:id/invoice`.
+- Application data is held in `data/db.json` via synchronous file reads and writes in `lib/store.js`.
 
 ## Module map
-- `routes/customers.js` — lists Khata customers and settlements; records customer settlements.
-- `routes/orders.js` — lists, retrieves, places, and cancels orders.
-- `routes/products.js` — lists/searches products and lists active coupons.
-- `routes/reports.js` — dashboard and GST reconciliation, pricing preview, and keyed data export.
-- `lib/coupons.js` — normalizes, validates, lists, and calculates configured coupon discounts.
-- `lib/dates.js` — formats today's date and normalizes date keys; derives fiscal-year labels.
-- `lib/inventory.js` — finds products, checks/reserves/releases stock, and summarizes inventory.
-- `lib/invoice.js` — computes invoice figures and renders printable HTML invoices.
-- `lib/ledger.js` — finds customers, calculates Khata balances, charges/reverses orders, and records settlements.
-- `lib/orders.js` — adds, finds, cancels, and filters orders.
-- `lib/pricing.js` — computes order subtotal, coupon discount, per-line GST, and totals.
-- `lib/reports.js` — computes dashboard summaries and compares stored order figures with invoice figures.
-- `lib/store.js` — reads/writes the JSON database and appends bounded audit history.
-- `lib/tax.js` — resolves GST rates from item rate/HSN configuration and splits GST into CGST/SGST.
+- `routes/customers.js` - lists customer/settlement data and records Khata settlements.
+- `routes/orders.js` - lists, fetches, creates, and cancels orders.
+- `routes/products.js` - lists products and active coupons.
+- `routes/reports.js` - serves dashboard, GST reconciliation, pricing preview, and admin export.
+- `lib/coupons.js` - normalizes, validates, calculates, and lists coupons.
+- `lib/dates.js` - formats today's date, normalizes date keys, and derives fiscal year.
+- `lib/inventory.js` - finds products, checks/reserves/releases stock, and summarizes inventory.
+- `lib/invoice.js` - computes invoice figures and renders printable invoice HTML.
+- `lib/ledger.js` - lists customers, charges/reverses Khata orders, and records settlements.
+- `lib/orders.js` - adds, finds, cancels, and filters orders.
+- `lib/pricing.js` - computes order subtotal, coupon discount, GST, and totals.
+- `lib/reports.js` - computes dashboard summary and invoice-versus-ledger GST reconciliation.
+- `lib/store.js` - reads/writes JSON data and appends audit entries.
+- `lib/tax.js` - resolves GST rates/slabs and splits tax into CGST and SGST.
 
 ## Commands
-- Start the app: `node server.js` (or `npm start`).
-- Run tests: `node --test` (the package does not define a test suite or a working test script).
+- Start the app: `node server.js`.
+- Run tests: `node --test` (Node's built-in test runner; no test files were found during inspection).
+- `package.json` currently defines `npm start` as `node server.js`; its `npm test` script is a placeholder that exits with an error.
 
 ## Rules
 1. Write characterization tests before changing behaviour.
 2. Change only the module(s) the ticket is about.
-3. Tests never read or write `data/db.json`; they use in-memory data.
+3. Tests never read or write `data/db.json`; use in-memory data.
 4. Add no dependencies.
 5. Make the smallest fix that works.
 
